@@ -65,7 +65,7 @@ public class CostStatEntry : IStatEntry
 
 #endregion
 
-//Nullable, da beim letzten Level keine Updatekosten vorhanden sind => Idee: Updateable darüber abfragbar
+//Nullable, da beim letzten Level keine Updatekosten vorhanden sind => Idee: Updateable darüber abfragbar // TEST
 [Serializable]
 public class BuildingLevelData
 {
