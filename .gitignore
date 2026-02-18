@@ -1,0 +1,67 @@
+# Unity Generated Folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Uu]serSettings/
+[Bb]uild/
+[Bb]uilds/
+*.utmp
+
+# Unity Auto-Generated Files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Build Artifacts
+*.apk
+*.aab
+*.ipa
+*.app
+*.exe
+*.x86
+*.x86_64
+*.unitypackage
+ExportedObj/
+
+# Crash Logs
+mono_crash.*.json
+sysinfo.txt
+
+# PlasticSCM / Unity VCS
+.plastic/
+ignore.conf
+*.private
+*.private.[0-9]*
+*.private.[0-9]*.meta
+ProjectSettings/*.private.*
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V3
+.Trashes
+
+# Windows
+Thumbs.db
+Desktop.ini

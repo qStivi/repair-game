@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab0cb277a2d77a646867392e28204d5c, type: 3}
+  m_Name: HouseLevel1
+  m_EditorClassIdentifier: 
+  hitpoints: 0
+  buildDuration: 0
+  repairIntervall: 0
+  buildingCosts:
+    <Coins>k__BackingField: 0
+    <Wood>k__BackingField: 0
+    <Stone>k__BackingField: 0
+    <PotionTools>k__BackingField: 0
+  level: 1
+  repairCost:
+    <Coins>k__BackingField: 0
+    <Wood>k__BackingField: 0
+    <Stone>k__BackingField: 0
+    <PotionTools>k__BackingField: 0
+  repairDuration: 0
+  productionIntervall: 0
+  production:
+    <Coins>k__BackingField: 0
+    <Wood>k__BackingField: 0
+    <Stone>k__BackingField: 0
+    <PotionTools>k__BackingField: 0
