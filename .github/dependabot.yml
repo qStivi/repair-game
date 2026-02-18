@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # GitHub Actions — group all action updates into one weekly PR
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # NuGet — group all .NET dependency updates into one weekly PR
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      nuget-dependencies:
+        patterns:
+          - "*"
