@@ -1922,10 +1922,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6272109812323906681, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}
       propertyPath: <PossibleBuildings>k__BackingField.Array.size
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6272109812323906681, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}
       propertyPath: '<PossibleBuildings>k__BackingField.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7147970970393805164, guid: f41f52d04f42b469fbec6ce7781f2f7b, type: 3}
+    - target: {fileID: 6272109812323906681, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}
+      propertyPath: '<PossibleBuildings>k__BackingField.Array.data[1]'
+      value: 
+      objectReference: {fileID: 7147970970393805164, guid: f41f52d04f42b469fbec6ce7781f2f7b, type: 3}
+    - target: {fileID: 6272109812323906681, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}
+      propertyPath: '<PossibleBuildings>k__BackingField.Array.data[2]'
+      value: 
+      objectReference: {fileID: 7147970970393805164, guid: f41f52d04f42b469fbec6ce7781f2f7b, type: 3}
+    - target: {fileID: 6272109812323906681, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}
+      propertyPath: '<PossibleBuildings>k__BackingField.Array.data[3]'
       value: 
       objectReference: {fileID: 7147970970393805164, guid: f41f52d04f42b469fbec6ce7781f2f7b, type: 3}
     - target: {fileID: 7214117082714390805, guid: 3be197dd44d414ed2a70f4583ba06be8, type: 3}

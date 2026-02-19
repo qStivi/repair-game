@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
+using JetBrains.Annotations;
 
 #region Enums
-
 public enum StatTypeBuilding
 {
     Hitpoints,
@@ -15,7 +15,7 @@ public enum StatTypeBuilding
     ProductionIntervall,
     ProductionAmount,
     RangeBoost,
-    UnitSlots
+    UnitSlots,
 }
 
 //Performante Mehrfachauswahl mittels 0001 | 0100 (= Production | Storage) => speichert "0101" möglich; max. 32bit bei Int; None als kein Flag gesetzt wichtig
@@ -27,16 +27,14 @@ public enum BuildingCategory
     Defense = 1 << 1,
     Storage = 1 << 2
 }
-
 #endregion
 
 
 #region IStatEntry: um die unterschiedlichen Typen von Value zu berücksichten und im Inspektor auswählen zu können
-
 public interface IStatEntry
 {
-    StatTypeBuilding StatType { get; }
-    IStat CreateStat();
+   StatTypeBuilding StatType { get; }
+   IStat CreateStat();
 }
 
 [Serializable]
@@ -45,24 +43,19 @@ public class FloatStatEntry : IStatEntry
     public float value;
     public StatTypeBuilding StatType { get; }
 
-    public IStat CreateStat()
-    {
-        return new Stat<FloatValue>(value);
-    }
-}
+    public IStat CreateStat() => new Stat<FloatValue>(value);
 
+   
+}
 [Serializable]
 public class CostStatEntry : IStatEntry
 {
-    public Cost value;
+    public Cost value; 
     public StatTypeBuilding StatType { get; }
 
-    public IStat CreateStat()
-    {
-        return new Stat<Cost>(value);
-    }
-}
+    public IStat CreateStat() => new Stat<Cost>(value);
 
+}
 #endregion
 
 //Nullable, da beim letzten Level keine Updatekosten vorhanden sind => Idee: Updateable darüber abfragbar
@@ -71,12 +64,12 @@ public class BuildingLevelData
 {
     public int level;
 
-    [SerializeReference] // beudeutet dass Unity bei diesem Feld Instanzen verwalteter Klassen (also „normale“ C#-Referenztypen) per Referenz und polymorph serialisieren soll. 
+    [SerializeReference] // bedeutet dass Unity bei diesem Feld Instanzen verwalteter Klassen (also „normale“ C#-Referenztypen) per Referenz und polymorph serialisieren soll. 
     public List<IStatEntry> stats;
 
-#nullable enable
+    #nullable enable
     public Cost? levelUpCost;
-#nullable disable
+    #nullable disable
 }
 
 
@@ -85,8 +78,10 @@ public class BuildingDefinition : ScriptableObject
 {
     public string id;
     public BuildingCategory category;
-    public List<BuildingLevelData> levels;
+    public List<BuildingLevelData> levels; 
 }
+
+
 
 
 /*public class BuildingLevelData : ScriptableObject
