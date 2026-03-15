@@ -4,10 +4,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class AbstractBuilding : MonoBehaviour
+public abstract class AbstractBuilding : MonoBehaviour, IModifierTarget
 {
     public BuildingDefinition definition;
     public int currentLevel = 1;
+    public ModifierDomain Domain => ModifierDomain.Building;
+    //FÜr den Anfang über simplen StringGenerator aus LevelData.Instance zu setzen 
+    public int TargetId {  get; protected set; }
+
+    //ModifierSystem IModifierTarget.ModifierSystem => LevelDataMananger.Instance.modifierSystem;
+
 
     [Header("UI")] public bool UIChanged;
 
@@ -49,6 +55,8 @@ public abstract class AbstractBuilding : MonoBehaviour
     [Header("Verweise")] protected Cost ressourcesOfLevel;
 
     [Header("Stats")] protected Dictionary<StatTypeBuilding, IStat> stats;
+
+
 
     protected virtual void Awake()
     {

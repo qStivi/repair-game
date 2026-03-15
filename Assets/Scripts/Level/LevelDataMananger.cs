@@ -17,6 +17,11 @@ public class LevelDataMananger : MonoBehaviour
     [HideInInspector] public LevelState state;
 
     public static LevelDataMananger Instance { get; private set; }
+
+    public ModifierSystem modifierSystem = new();
+
+    public StringIdGenerator stringIdGenerator = new();
+
     // private readonly Timer syncTickEverySecond = new(1000);
 
     [Tooltip("How much max space for ressources is given.")]

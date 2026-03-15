@@ -9,7 +9,6 @@ using UnityEngine;
 public interface IStat
 {
     object GetValueAsObject();
-    void RemoveModifiersFromSource(object source);
 }
 
 /// <summary>
@@ -61,23 +60,19 @@ public struct FloatValue : IStatOperable<FloatValue>
 public class Stat<T> : IStat where T : IStatOperable<T>
 {
     private readonly T baseValue;
-    private readonly List<Modifier<T>> modifiers = new();
-    private readonly List<Modifier<float>> pctModifiers = new();
+    private readonly IModifierTarget owner;
+    private readonly int statId;
 
     //Caching mittels dirty-Flag 
     private T _chacheValue;
     private bool _dirty = true;
 
-    public Stat(T value)
+    public Stat(T value, IModifierTarget owner, int statId)
     {
         baseValue = value;
         _chacheValue = value;
-    }
-
-    public void RemoveModifiersFromSource(object src)
-    {
-        modifiers.RemoveAll(m => m.Source == src);
-        Invalidate();
+        this.owner = owner;
+        this.statId = statId;
     }
 
     object IStat.GetValueAsObject()
@@ -87,17 +82,23 @@ public class Stat<T> : IStat where T : IStatOperable<T>
 
     public event Action OnStatChanged;
 
-    public void AddModifier(Modifier<T> mod)
-    {
-        modifiers.Add(mod);
-        Invalidate();
-    }
-
     private void Invalidate()
     {
         _dirty = true;
         OnStatChanged?.Invoke();
     }
+
+   
+
+        public T ComputeValue(ModifierSystem mods, float now)
+        {
+            
+          
+
+            var apps = mods.QueryForTargetAndStat(TargetId, statKey, now);
+            return StatCalculator.Calculate(BaseHealth, apps);
+        }
+    
 
     public T GetValue()
     {

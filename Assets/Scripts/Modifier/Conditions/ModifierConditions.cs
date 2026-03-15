@@ -1,7 +1,18 @@
+using System;
 using UnityEngine;
 
 public abstract class ModifierBaseConditionSO : ScriptableObject, ICondition
 {
+    [SerializeField, HideInInspector] private string uniqueID;
+    public string UniqueId => uniqueID;
+
+#if UNITY_EDITOR
+    protected virtual void OnValidate()
+    {
+        if (string.IsNullOrEmpty(UniqueId))
+            uniqueID = Guid.NewGuid().ToString("N");
+    }
+#endif
     public abstract bool IsMet(IConditionContext context);
  
 }
