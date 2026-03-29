@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum RessourceType
@@ -14,15 +15,15 @@ public enum RessourceType
 [Serializable]
 public class Cost : IComparable<Cost>, IStatOperable<Cost>
 {
-    [field: SerializeField] public long Coins { get; set; }
+    [field: SerializeField] public float Coins { get; set; }
 
-    [field: SerializeField] public long Wood { get; set; }
+    [field: SerializeField] public float Wood { get; set; }
 
-    [field: SerializeField] public long Stone { get; set; }
+    [field: SerializeField] public float Stone { get; set; }
 
-    [field: SerializeField] public long PotionTools { get; set; }
+    [field: SerializeField] public float PotionTools { get; set; }
 
-    public Cost(long coins = 0, long wood = 0, long stone = 0, long potionTools = 0)
+    public Cost(float coins = 0, float wood = 0, float stone = 0, float potionTools = 0)
     {
         Coins = coins;
         Wood = wood;
@@ -66,7 +67,7 @@ public class Cost : IComparable<Cost>, IStatOperable<Cost>
                a.PotionTools <= b.PotionTools;
     }
 
-    public static Cost operator /(Cost a, long b)
+    public static Cost operator /(Cost a, float b)
     {
         return new Cost
         {
@@ -150,16 +151,28 @@ public class Cost : IComparable<Cost>, IStatOperable<Cost>
         return this + other;
     }
 
-    public Cost ApplyPercent(float pct)
+    public Cost ApplyPercent(Cost pct)
     {
         return new Cost
         {
-            Coins = Mathf.RoundToInt(Coins * (1 + pct)),
-            Wood = Mathf.RoundToInt(Wood * (1 + pct)),
-            Stone = Mathf.RoundToInt(Stone * (1 + pct)),
-            PotionTools = Mathf.RoundToInt(PotionTools * (1 + pct))
+            Coins = Coins * (1 + pct.Coins),
+            Wood = Wood * (1 + pct.Wood),
+            Stone = Stone * (1 + pct.Stone),
+            PotionTools = PotionTools * (1 + pct.PotionTools)
         };
     }
+    public Cost ApplyPercent(float pct) {
+
+        return new Cost
+        {
+            Coins = Coins * (1 + pct),
+            Wood = Wood * (1 + pct),
+            Stone = Stone * (1 + pct),
+            PotionTools = PotionTools * (1 + pct)
+        };
+    }
+    
+
 
     #endregion
 }
