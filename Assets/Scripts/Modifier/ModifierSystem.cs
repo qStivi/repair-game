@@ -8,6 +8,9 @@ public sealed class ModifierSystem
     private readonly Dictionary<string, IModificationSource> _sources = new();
     private readonly Dictionary<StackKey, ModifierApplication> _appsByKey = new();
     private readonly Dictionary<StatBucketKey, List<ModifierApplication>> _appsByStat = new();
+    // Versioning: Whenever a modifier is added or removed, the version of the affected stat bucket is incremented. 
+    // This allows caching of computed stat values and invalidating them when the underlying modifiers change.
+    private readonly Dictionary<StatBucketKey, long> _bucketVersions = new();
 
     private readonly List<ModifierApplication> _apps = new();
 
@@ -55,19 +58,19 @@ public sealed class ModifierSystem
             return existing;
         }
 
-        var app = new ModifierApplication(proto, targetId, source.SourceId, key, now, expireAt);
+        var app = proto.CreateApplication(targetId, source.SourceId, key, now, expireAt);
         _appsByKey[key] = app;
         _apps.Add(app);
 
         var statBucketKey = new StatBucketKey(targetOrNull.Domain, proto.GetStatAsInt(), targetId ?? 0);
-       
-        if(!_appsByStat.TryGetValue(statBucketKey, out var modifierApplications))
+
+        if (!_appsByStat.TryGetValue(statBucketKey, out var modifierApplications))
         {
             modifierApplications = new List<ModifierApplication>();
             _appsByStat[statBucketKey] = modifierApplications;
         }
 
-        modifierApplications.Add(app);  
+        modifierApplications.Add(app);
         return app;
     }
 
@@ -104,49 +107,102 @@ public sealed class ModifierSystem
         _appsByKey.Remove(app.Key);
     }
 
-    public IEnumerable<ModifierApplication> Query(IModifierTarget target, int statId, float now)
+    public long GetBucketVersion(StatBucketKey key)
     {
-        if(_appsByStat.TryGetValue(new StatBucketKey(target.Domain, statId, target.TargetId), out var targeted))
-        {
-            for(int i = 0; i < targeted.Count; i++)
-            {
-                var modifierApplication = targeted[i];
-                if(modifierApplication.IsExpired(now)) continue;
+        return (!_bucketVersions.TryGetValue(key, out var version)) ? version : 0;
+    }
 
-              
-                    if (!_sources.TryGetValue(modifierApplication.SourceId, out var source))
-                    {
-                        throw new KeyNotFoundException(
-                            $"No source found for SourceId '{modifierApplication.SourceId}'.");
-                    }
-                
-                if (!modifierApplication.Prototype.CanApply(target, source)) continue;
-                yield return modifierApplication;
-                
+    public long GetCombindedVersion(IModifierTarget target, int statId)
+    {
+        var targetedKey = new StatBucketKey(target.Domain, statId, target.TargetId);
+        var globalKey = new StatBucketKey(target.Domain, statId);
+
+        long targetedVersion = GetBucketVersion(targetedKey);
+        long globalVersion = GetBucketVersion(globalKey);
+
+        return HashCode.Combine(targetedVersion, globalVersion);
+    }
+
+    public IEnumerable<ModifierApplication<T>> Query<T>(
+    IModifierTarget target,
+    int statId,
+    float now)
+    where T : IStatOperable<T>
+    {
+        // Target-specific modifiers
+        var targetedKey = new StatBucketKey(
+            target.Domain,
+            statId,
+            target.TargetId);
+
+        if (_appsByStat.TryGetValue(targetedKey, out var targeted))
+        {
+            foreach (var app in targeted)
+            {
+                if (app.IsExpired(now))
+                    continue;
+
+
+                if (app is not ModifierApplication<T> typedApp)
+                {
+                    throw new InvalidOperationException(
+                        $"Stat bucket {target.Domain}/{statId} " +
+                        $"contains {app.GetType().Name}, " +
+                        $"but {typeof(T).Name} was requested.");
+                }
+
+                if (!_sources.TryGetValue(
+                        typedApp.SourceId,
+                        out var source))
+                {
+                    throw new KeyNotFoundException(
+                        $"No source found for SourceId " +
+                        $"'{typedApp.SourceId}'.");
+                }
+
+                if (!typedApp.Prototype.CanApply(target, source))
+                    continue;
+
+                yield return typedApp;
             }
         }
 
-        if (_appsByStat.TryGetValue(new StatBucketKey(target.Domain, statId), out var global))
+        // Global modifiers
+        var globalKey = new StatBucketKey(
+            target.Domain,
+            statId,
+            0);
+
+        if (_appsByStat.TryGetValue(globalKey, out var global))
         {
-            for (int i = 0; i < global.Count; i++)
+            foreach (var app in global)
             {
-                var modifierApplication = global[i];
-                if (modifierApplication.IsExpired(now)) continue;
+                if (app.IsExpired(now))
+                    continue;
 
-
-                if (!_sources.TryGetValue(modifierApplication.SourceId, out var source))
+                if (app is not ModifierApplication<T> typedApp)
+                {
+                    throw new InvalidOperationException(
+                        $"Stat bucket {target.Domain}/{statId} " +
+                        $"contains {app.GetType().Name}, " +
+                        $"but {typeof(T).Name} was requested.");
+                }
+                if (!_sources.TryGetValue(
+                        typedApp.SourceId,
+                        out var source))
                 {
                     throw new KeyNotFoundException(
-                        $"No source found for SourceId '{modifierApplication.SourceId}'.");
+                        $"No source found for SourceId " +
+                        $"'{typedApp.SourceId}'.");
                 }
 
-                if (!modifierApplication.Prototype.CanApply(target, source)) continue;
-                yield return modifierApplication;
+                if (!typedApp.Prototype.CanApply(target, source))
+                    continue;
 
+                yield return typedApp;
             }
         }
     }
-
     private static StackKey MakeStackKey(ModifierPrototypeSO proto, IModificationSource source, int? targetId)
     {
         return new StackKey(proto.UniqueId, source.SourceId, targetId);

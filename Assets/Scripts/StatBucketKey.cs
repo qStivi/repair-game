@@ -4,19 +4,21 @@ using System;
 public struct StatBucketKey : IEquatable<StatBucketKey>
 {
     public ModifierDomain Domain;
+    // Reference to the stat id, which is unique for each statType enum value within a given domain. 
+    // This is used to identify the stat type in way that not using the enum directly to support different stat types for different domains.
     public int statId;
     public int targetId; //0 if global
 
     public StatBucketKey(ModifierDomain domain, int statId, int targetId = 0)
     {
-        this.Domain = domain;
+        Domain = domain;
         this.statId = statId;
         this.targetId = targetId;
     }
 
     public readonly bool Equals(StatBucketKey other)
     {
-        return this.Domain.Equals(other.Domain) && this.statId == other.statId && this.targetId == other.targetId;
+        return Domain.Equals(other.Domain) && statId == other.statId && targetId == other.targetId;
     }
 
     public override readonly int GetHashCode()

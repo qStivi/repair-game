@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 
 /// <summary>
-/// Interface für Spielmechaniken, die Modifikation Prototypen enthalten, also aus der Modifier entstehen können (z.B. Cards oder Potions)
+/// Interface für Spielmechaniken, die Modifikation Prototypen enthalten, also aus denen Modifier entstehen können (z.B. Cards oder Potions)
 /// </summary>
 public interface IModificationSource : IIdentifiable<string>
 {

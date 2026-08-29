@@ -23,6 +23,9 @@ public class Cost : IComparable<Cost>, IStatOperable<Cost>
 
     [field: SerializeField] public float PotionTools { get; set; }
 
+    public Cost PctDefault => new(1, 1, 1, 1);
+
+
     public Cost(float coins = 0, float wood = 0, float stone = 0, float potionTools = 0)
     {
         Coins = coins;
@@ -146,6 +149,7 @@ public class Cost : IComparable<Cost>, IStatOperable<Cost>
         return true;
     }
 
+    
     public Cost AddAbsolute(Cost other)
     {
         return this + other;
@@ -161,18 +165,6 @@ public class Cost : IComparable<Cost>, IStatOperable<Cost>
             PotionTools = PotionTools * (1 + pct.PotionTools)
         };
     }
-    public Cost ApplyPercent(float pct) {
-
-        return new Cost
-        {
-            Coins = Coins * (1 + pct),
-            Wood = Wood * (1 + pct),
-            Stone = Stone * (1 + pct),
-            PotionTools = PotionTools * (1 + pct)
-        };
-    }
-    
-
 
     #endregion
 }

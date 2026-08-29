@@ -6,16 +6,16 @@ using JetBrains.Annotations;
 #region Enums
 public enum StatTypeBuilding
 {
-    Hitpoints,
-    BuildDuration,
-    BuildingCosts,
-    RepairIntervall,
-    RepairCost,
-    RepairDuration,
-    ProductionIntervall,
-    ProductionAmount,
-    RangeBoost,
-    UnitSlots,
+    Hitpoints = 1,
+    BuildDuration = 2,
+    BuildingCosts = 3,
+    RepairIntervall = 4,
+    RepairCost = 5,
+    RepairDuration = 6,
+    ProductionIntervall = 7,
+    ProductionAmount = 8,
+    RangeBoost = 9,
+    UnitSlots = 10,
 }
 
 //Performante Mehrfachauswahl mittels 0001 | 0100 (= Production | Storage) => speichert "0101" möglich; max. 32bit bei Int; None als kein Flag gesetzt wichtig
@@ -31,32 +31,34 @@ public enum BuildingCategory
 
 
 #region IStatEntry: um die unterschiedlichen Typen von Value zu berücksichten und im Inspektor auswählen zu können
-public interface IStatEntry
+public interface IStatEntry<TStatType> where TStatType: Enum
 {
-   StatTypeBuilding StatType { get; }
-   IStat CreateStat();
+   TStatType StatType { get; }
+   int StatId => Convert.ToInt32(StatType);
+   IStat CreateStat(IModifierTarget owner);
 }
 
 [Serializable]
-public class FloatStatEntry : IStatEntry
+public class FloatStatEntry<TStatType> : IStatEntry<TStatType> where TStatType: Enum
 {
     public float value;
-    public StatTypeBuilding StatType { get; }
+    public TStatType StatType { get; }
 
-    public IStat CreateStat() => new Stat<FloatValue>(value);
+    public IStat CreateStat(IModifierTarget owner) => new Stat<FloatValue>(value, owner, StatId);
 
    
 }
 [Serializable]
-public class CostStatEntry : IStatEntry
+public class CostStatEntry<TStatType> : IStatEntry<TStatType> where TStatType: Enum
 {
     public Cost value; 
-    public StatTypeBuilding StatType { get; }
+    public TStatType StatType { get; }
 
-    public IStat CreateStat() => new Stat<Cost>(value);
+    public IStat CreateStat(IModifierTarget owner) => new Stat<Cost>(value, owner, StatId);
 
 }
 #endregion
+
 
 //Nullable, da beim letzten Level keine Updatekosten vorhanden sind => Idee: Updateable darüber abfragbar
 [Serializable]
@@ -65,7 +67,7 @@ public class BuildingLevelData
     public int level;
 
     [SerializeReference] // bedeutet dass Unity bei diesem Feld Instanzen verwalteter Klassen (also „normale“ C#-Referenztypen) per Referenz und polymorph serialisieren soll. 
-    public List<IStatEntry> stats;
+    public List<IStatEntry<StatTypeBuilding>> stats;
 
     #nullable enable
     public Cost? levelUpCost;

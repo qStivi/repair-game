@@ -1,7 +1,6 @@
 
-public enum StackMode { None, AddStacks, RefreshDuration, AddAndRefresh }
 
-public sealed class ModifierApplication
+public abstract class ModifierApplication
 {
     public ModifierPrototypeSO Prototype { get; }
     public int? TargetId { get; }      // null => global modifier (affects all matching targets)
@@ -32,5 +31,32 @@ public sealed class ModifierApplication
     {
         var newExpire = now + durationSeconds;
         ExpireAtTime = ExpireAtTime.HasValue ? System.Math.Max(ExpireAtTime.Value, newExpire) : newExpire;
+    }
+}
+
+public sealed class ModifierApplication<T>
+    : ModifierApplication
+    where T : IStatOperable<T>
+{
+    public ModifierPrototypeSO<T> TypedPrototype { get; }
+
+    public T Value => TypedPrototype.Value;
+
+    public ModifierApplication(
+        ModifierPrototypeSO<T> proto,
+        int? targetId,
+        string sourceId,
+        StackKey key,
+        float now,
+        float? expireAt)
+        : base(
+            proto,
+            targetId,
+            sourceId,
+            key,
+            now,
+            expireAt)
+    {
+        TypedPrototype = proto;
     }
 }
